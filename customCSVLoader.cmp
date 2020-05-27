@@ -1,0 +1,111 @@
+<aura:component
+  controller="CSVCreator"
+  implements="force:appHostable,flexipage:availableForAllPageTypes"
+>
+  <aura:attribute name="csvObject" type="CSVObject" />
+  <aura:attribute name="csvString" type="String" />
+  <aura:attribute name="showcard" type="boolean" default="false" />
+
+  <aura:handler name="change" value="v.csvString" action="{!c.handleGetCSV}" />
+
+  <!-- attributes for displaying object names in the picklist -->
+  <aura:attribute name="options" type="List" />
+  <aura:attribute name="selectedValue" type="String" />
+  <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+  <!--<ltng:require styles="{!$Resource.bootstrap  + '/bootstrap-4.4.1/css/bootstrap.min.css'}"/>-->
+
+  <div class="slds-card">
+    <div class="slds-card__header slds-grid">
+      <header class="slds-media slds-media_center slds-has-flexi-truncate">
+        <div class="slds-media__body">
+          <h2 class="slds-card__header-title">
+            <span>CSV Dataloader</span>
+          </h2>
+        </div>
+        <button
+          class="slds-button slds-button_destructive"
+          onclick="{!c.cleanData}"
+        >
+          Clean Data
+        </button>
+      </header>
+    </div>
+
+    <div
+      class="slds-card__body slds-card__body_inner"
+      style="max-width: 98%; overflow-x: auto; padding: 20px;"
+    >
+      <!--<input type="file" class="file" aura:id="file" accept=".csv" onchange="{!c.handleUploadFinished}" />-->
+      <lightning:input
+        aura:id="file"
+        type="file"
+        name="file"
+        label="Attachment"
+        multiple="false"
+        accept=".csv"
+        onchange="{! c.handleUploadFinished }"
+      />
+
+      <!-- Add the Create Button, after csv file is displayed. -->
+      <aura:if isTrue="{!and(not(empty(v.csvObject)),v.showcard)}">
+        <!--&nbsp;&nbsp;&nbsp;-->
+        <lightning:button
+          label="Import Records"
+          title="Neutral action"
+          onclick="{! c.insertRecord }"
+        />
+
+        <!-- Display Sobject -->
+        <!--<div class="slds-form-element slds-has-error">-->
+        <div class="slds-form-element__control" style="width: 300px;">
+          <lightning:select
+            name="Objects"
+            label="Select object:"
+            aura:id="onjId"
+            value="{!v.selectedValue}"
+          >
+            <option value="">Choose one...</option>
+            <aura:iteration items="{!v.options}" var="objectname">
+              <option value="{!objectname}" text="">{!objectname} </option>
+            </aura:iteration>
+          </lightning:select>
+        </div>
+        <!--</div>-->
+        <!-- End of picklist -->
+
+        <table
+          class="slds-border_right slds-border_left slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_striped"
+        >
+          <thead>
+            <tr class="slds-line-height_reset">
+              <aura:iteration items="{!v.csvObject.headers}" var="header">
+                <th class="" scope="col" style="max-width: 250px;">
+                  <div class="slds-truncate" title="{!header.column_name}">
+                    {!header.column_name}
+                  </div>
+                </th>
+              </aura:iteration>
+            </tr>
+          </thead>
+          <tbody id="table_body">
+            <aura:iteration items="{!v.csvObject.lines}" var="line">
+              <tr class="slds-hint-parent">
+                <aura:iteration items="{!line}" var="cell">
+                  <td
+                    data-label="{!v.csvObject.headers.column_name}"
+                    style="max-width: 250px;"
+                  >
+                    <div class="slds-truncate" title="{!cell}">
+                      {!cell}
+                    </div>
+                  </td>
+                </aura:iteration>
+              </tr>
+            </aura:iteration>
+          </tbody>
+        </table>
+      </aura:if>
+    </div>
+  </div>
+</aura:component>

@@ -127,20 +127,15 @@ public class CSVCreator  {
             integer p = 0;
             SObject createObj = Schema.getGlobalDescribe().get(objectName).newSObject();
             System.debug('++listColumn.size()++'+listColumn.size());
-            //System.debug('++fields++'+fields);
+
             for(String iterateOverColumn : listColumn){
-                //get(Sobjecttype)(iterateOverC)
+
                 String typeOfAccountfield = Schema.getGlobalDescribe().get(objectName).getDescribe().fields.getMap().get(iterateOverColumn).getDescribe().getType().Name();
                 System.debug('typeOfField '+iterateOverColumn +' is : '+typeOfAccountfield);
 
                 if(typeOfAccountfield.equalsIgnoreCase('Integer')) {
-
-                    //createObj.put(iterateOverColumn,null );
                     createObj.put(iterateOverColumn, String.isBlank(fields.get(p))? null : Integer.valueOf(fields.get(p)) );
                 }
-                /*else if (typeOfAccountfield.equalsIgnoreCase('Integer')){
-                    createObj.put(iterateOverColumn,Integer.valueOf(fields.get(p)) );
-                }*/
                 else if (typeOfAccountfield.equalsIgnoreCase('Boolean')){
                     createObj.put(iterateOverColumn,Boolean.valueOf(fields.get(p)) );
                 }
